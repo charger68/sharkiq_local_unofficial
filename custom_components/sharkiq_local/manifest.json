@@ -1,9 +1,9 @@
 {
   "domain": "sharkiq_local",
   "name": "Shark IQ (Local)",
-  "version": "0.1.0",
-  "documentation": "https://github.com/YOUR_USERNAME/sharkiq_local",
-  "issue_tracker": "https://github.com/YOUR_USERNAME/sharkiq_local/issues",
+  "version": "0.2.0",
+  "documentation": "https://github.com/charger68/sharkiq_local",
+  "issue_tracker": "https://github.com/charger68/sharkiq_local/issues",
   "codeowners": ["@charger68"],
   "config_flow": true,
   "dependencies": [],

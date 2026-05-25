@@ -20,6 +20,17 @@
       "already_configured": "This vacuum is already configured."
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Shark IQ Vacuum options",
+        "description": "How often to poll the vacuum for status updates. Faster polling means fresher battery level and quicker response in the UI; slower polling means less network traffic. 30s is the recommended default. Range: 5\u2013600 seconds.",
+        "data": {
+          "scan_interval": "Polling interval (seconds)"
+        }
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "battery": { "name": "Battery" },

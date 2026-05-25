@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.2.0] - 2026-05-25
+
+### Added
+- Configurable polling interval via options flow ("Configure" button on the integration card). Range 5–600 seconds, default 30s.
+- Changes apply live — no restart needed.
+- Wi-Fi status refresh cadence stays at ~5 min regardless of poll rate, so faster polling doesn't proportionally hammer the heavier `wifi_status` endpoint.
+
 ## [0.1.0] - 2026-05-25
 
 ### Added

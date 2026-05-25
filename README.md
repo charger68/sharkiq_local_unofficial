@@ -1,7 +1,7 @@
 # Shark IQ (Local) — Home Assistant Integration
 
-[![hassfest](https://github.com/YOUR_USERNAME/sharkiq_local/actions/workflows/hassfest.yml/badge.svg)](https://github.com/YOUR_USERNAME/sharkiq_local/actions/workflows/hassfest.yml)
-[![HACS](https://github.com/YOUR_USERNAME/sharkiq_local/actions/workflows/hacs.yml/badge.svg)](https://github.com/YOUR_USERNAME/sharkiq_local/actions/workflows/hacs.yml)
+[![hassfest](https://github.com/charger68/sharkiq_local/actions/workflows/hassfest.yml/badge.svg)](https://github.com/charger68/sharkiq_local/actions/workflows/hassfest.yml)
+[![HACS](https://github.com/charger68/sharkiq_local/actions/workflows/hacs.yml/badge.svg)](https://github.com/charger68/sharkiq_local/actions/workflows/hacs.yml)
 
 A Home Assistant custom integration for **Shark IQ robot vacuums**, powered by the [`sharklocal`](https://github.com/sharkiqlibs/sharklocal) library. Talks to your vacuums entirely over your LAN — no cloud account or internet round-trip.
 
@@ -33,7 +33,7 @@ Supports **multiple vacuums** — add each one through the UI and they appear as
 
 ### Option B: Manual
 
-1. Download the latest release zip from the [Releases page](https://github.com/YOUR_USERNAME/sharkiq_local/releases)
+1. Download the latest release zip from the [Releases page](https://github.com/charger68/sharkiq_local/releases)
 2. Extract and copy `custom_components/sharkiq_local/` into your HA `config/custom_components/` directory
 3. Restart Home Assistant
 
@@ -64,6 +64,18 @@ When adding a vacuum:
 | Name | — | shown in HA |
 | Mapping | `sharkiq_v1` | the only built-in mapping today |
 | Also enable MQTT | on | gives real-time mode updates between polls |
+
+### Adjusting the polling interval
+
+After setup, click **Configure** on the integration card (Settings → Devices & Services → Shark IQ (Local) → your vacuum) to change how often the integration polls each vacuum for status.
+
+- **Default 30 seconds** — sensible balance of freshness and network traffic
+- **15 seconds** — snappier dashboard feel, fine for daily use
+- **10 seconds** — works, but you won't really notice the improvement
+- **Under 5 seconds** — not allowed; no benefit and risks racing requests
+- **60+ seconds** — fine if you mostly drive automations off MQTT mode-change events (which push instantly regardless of poll rate); battery numbers will just be staler
+
+Range: 5 to 600 seconds. Changes apply immediately, no restart needed.
 
 ## Example automation
 

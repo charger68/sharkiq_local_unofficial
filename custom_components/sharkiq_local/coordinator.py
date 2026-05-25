@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from datetime import timedelta
 from typing import Any
 
 from homeassistant.core import HomeAssistant
@@ -15,7 +16,7 @@ from sharklocal import (
 )
 from sharklocal.models import DeviceInfo, VacuumStatus
 
-from .const import DOMAIN, SCAN_INTERVAL
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,8 +33,9 @@ class SharkData:
 class SharkCoordinator(DataUpdateCoordinator[SharkData]):
     """Coordinate polling of a single Shark vacuum.
 
-    Holds a long-lived VacuumClient and refreshes status every SCAN_INTERVAL.
-    Device info is fetched once at startup and then occasionally refreshed.
+    Holds a long-lived VacuumClient and refreshes status every scan_interval
+    seconds. Device info is fetched once at startup and then refreshed at a
+    cadence that doesn't scale with the poll rate.
     """
 
     def __init__(
@@ -42,17 +44,22 @@ class SharkCoordinator(DataUpdateCoordinator[SharkData]):
         client: VacuumClient,
         entry_id: str,
         host: str,
+        scan_interval: int,
     ) -> None:
         """Initialize."""
         super().__init__(
             hass,
             _LOGGER,
             name=f"{DOMAIN}_{host}",
-            update_interval=SCAN_INTERVAL,
+            update_interval=timedelta(seconds=scan_interval),
         )
         self.client = client
         self.entry_id = entry_id
         self.host = host
+        # Refresh Wi-Fi info roughly every 5 minutes regardless of poll rate.
+        # Faster polling shouldn't mean we hammer wifi_status too — that endpoint
+        # is heavier than /get/status and the data (RSSI, IP) rarely changes.
+        self._wifi_refresh_every = max(1, 300 // max(1, scan_interval))
         # Cached once-per-session info (firmware, MAC, etc.)
         self._device_info: DeviceInfo | None = None
         self._wifi: DeviceInfo | None = None
@@ -78,10 +85,11 @@ class SharkCoordinator(DataUpdateCoordinator[SharkData]):
         except SharklocalError as err:
             raise UpdateFailed(f"Vacuum {self.host} error: {err}") from err
 
-        # Refresh wifi info every ~10 polls (~5 min at 30s interval) for RSSI updates.
-        # Firmware/MAC are stable, so we don't need to hammer the device.
+        # Refresh wifi info on a time-based cadence (~5 min), not a fixed
+        # poll-count, so faster polling doesn't proportionally hammer the
+        # heavier wifi_status endpoint.
         self._device_info_cycle += 1
-        if self._device_info_cycle >= 10:
+        if self._device_info_cycle >= self._wifi_refresh_every:
             self._device_info_cycle = 0
             try:
                 self._wifi = await self.client.get_wifi_status()

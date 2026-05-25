@@ -1,20 +1,27 @@
 """Constants for the Shark IQ (Local) integration."""
 from __future__ import annotations
 
-from datetime import timedelta
-
 DOMAIN = "sharkiq_local"
 
-# Config entry keys
+# Config entry keys (initial setup)
 CONF_HOST = "host"
 CONF_NAME = "name"
 CONF_MAPPING = "mapping"
 CONF_USE_MQTT = "use_mqtt"
 
+# Options keys (editable after setup via "Configure")
+CONF_SCAN_INTERVAL = "scan_interval"
+
 # Defaults
 DEFAULT_MAPPING = "sharkiq_v1"
 DEFAULT_USE_MQTT = True
-SCAN_INTERVAL = timedelta(seconds=30)
+DEFAULT_SCAN_INTERVAL = 30  # seconds
+
+# Sanity bounds for the polling interval. 5s lower bound prevents users from
+# accidentally setting something pathological; 600s upper is "you basically
+# turned polling off but didn't want to disable the entity".
+MIN_SCAN_INTERVAL = 5
+MAX_SCAN_INTERVAL = 600
 
 # Platforms provided by this integration
 PLATFORMS = ["vacuum", "sensor"]

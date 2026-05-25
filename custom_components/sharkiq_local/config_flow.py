@@ -6,8 +6,15 @@ from typing import Any
 
 import voluptuous as vol
 
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+)
 from homeassistant.const import CONF_HOST, CONF_NAME
+from homeassistant.core import callback
+from homeassistant.helpers import config_validation as cv
 
 from sharklocal import (
     ConnectError,
@@ -17,10 +24,14 @@ from sharklocal import (
 
 from .const import (
     CONF_MAPPING,
+    CONF_SCAN_INTERVAL,
     CONF_USE_MQTT,
     DEFAULT_MAPPING,
+    DEFAULT_SCAN_INTERVAL,
     DEFAULT_USE_MQTT,
     DOMAIN,
+    MAX_SCAN_INTERVAL,
+    MIN_SCAN_INTERVAL,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -66,6 +77,16 @@ class SharkIQLocalConfigFlow(ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
 
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
+        """Tell HA we have an options flow (the 'Configure' button).
+
+        config_entry param is required by HA's signature but unused here —
+        HA assigns it to the flow instance automatically.
+        """
+        return SharkIQLocalOptionsFlow()
+
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
@@ -110,3 +131,33 @@ class SharkIQLocalConfigFlow(ConfigFlow, domain=DOMAIN):
             data_schema=STEP_USER_DATA_SCHEMA,
             errors=errors,
         )
+
+
+class SharkIQLocalOptionsFlow(OptionsFlow):
+    """Options flow — backs the 'Configure' button on the integration card.
+
+    Note: in modern HA (2024.11+) we do NOT set self.config_entry in __init__.
+    HA assigns it automatically and direct assignment is deprecated.
+    """
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Show and save the options form."""
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        current = self.config_entry.options.get(
+            CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
+        )
+
+        schema = vol.Schema(
+            {
+                vol.Required(CONF_SCAN_INTERVAL, default=current): vol.All(
+                    cv.positive_int,
+                    vol.Range(min=MIN_SCAN_INTERVAL, max=MAX_SCAN_INTERVAL),
+                )
+            }
+        )
+
+        return self.async_show_form(step_id="init", data_schema=schema)
