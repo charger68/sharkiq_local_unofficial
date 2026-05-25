@@ -1,0 +1,13 @@
+{
+  "domain": "sharkiq_local_unofficial",
+  "name": "Shark IQ (Local, Unofficial)",
+  "version": "0.3.0",
+  "documentation": "https://github.com/charger68/sharkiq_local_unofficial",
+  "issue_tracker": "https://github.com/charger68/sharkiq_local_unofficial/issues",
+  "codeowners": ["@charger68"],
+  "config_flow": true,
+  "dependencies": [],
+  "requirements": ["sharklocal>=0.1.0"],
+  "iot_class": "local_polling",
+  "integration_type": "device"
+}

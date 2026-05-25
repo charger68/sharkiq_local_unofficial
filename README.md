@@ -1,9 +1,11 @@
-# Shark IQ (Local) — Home Assistant Integration
+# Shark IQ (Local, Unofficial) — Home Assistant Integration
 
-[![hassfest](https://github.com/charger68/sharkiq_local/actions/workflows/hassfest.yml/badge.svg)](https://github.com/charger68/sharkiq_local/actions/workflows/hassfest.yml)
-[![HACS](https://github.com/charger68/sharkiq_local/actions/workflows/hacs.yml/badge.svg)](https://github.com/charger68/sharkiq_local/actions/workflows/hacs.yml)
+[![hassfest](https://github.com/charger68/sharkiq_local_unofficial/actions/workflows/hassfest.yml/badge.svg)](https://github.com/charger68/sharkiq_local_unofficial/actions/workflows/hassfest.yml)
+[![HACS](https://github.com/charger68/sharkiq_local_unofficial/actions/workflows/hacs.yml/badge.svg)](https://github.com/charger68/sharkiq_local_unofficial/actions/workflows/hacs.yml)
 
 A Home Assistant custom integration for **Shark IQ robot vacuums**, powered by the [`sharklocal`](https://github.com/sharkiqlibs/sharklocal) library. Talks to your vacuums entirely over your LAN — no cloud account or internet round-trip.
+
+This is an **independent community project** and is not affiliated with, endorsed by, or sponsored by SharkNinja Operating LLC. "Shark" and "Shark IQ" are trademarks of their respective owners; they appear here only to describe the hardware this integration controls.
 
 Supports **multiple vacuums** — add each one through the UI and they appear as separate devices.
 
@@ -27,21 +29,21 @@ Supports **multiple vacuums** — add each one through the UI and they appear as
 
 1. In HACS, go to **Integrations**
 2. Click the three-dot menu (top right) → **Custom repositories**
-3. Add `https://github.com/charger68/sharkiq_local` with category **Integration**
-4. Find **Shark IQ (Local)** in the integrations list and install
+3. Add `https://github.com/charger68/sharkiq_local_unofficial` with category **Integration**
+4. Find **Shark IQ (Local, Unofficial)** in the integrations list and install
 5. Restart Home Assistant
 
 ### Option B: Manual
 
-1. Download the latest release zip from the [Releases page](https://github.com/charger68/sharkiq_local/releases)
-2. Extract and copy `custom_components/sharkiq_local/` into your HA `config/custom_components/` directory
+1. Download the latest release zip from the [Releases page](https://github.com/charger68/sharkiq_local_unofficial/releases)
+2. Extract and copy `custom_components/sharkiq_local_unofficial/` into your HA `config/custom_components/` directory
 3. Restart Home Assistant
 
 ## Setup
 
 1. Find each vacuum's IP address (router DHCP list, or run `nmap -sn 192.168.1.0/24`)
 2. Give each one a static DHCP reservation in your router so the IP doesn't change
-3. In HA: **Settings → Devices & Services → Add Integration → Shark IQ (Local)**
+3. In HA: **Settings → Devices & Services → Add Integration → Shark IQ (Local, Unofficial)**
 4. Enter the IP and a friendly name (e.g. `Downstairs Shark`)
 5. Submit. Repeat for your second vacuum.
 
@@ -67,7 +69,7 @@ When adding a vacuum:
 
 ### Adjusting the polling interval
 
-After setup, click **Configure** on the integration card (Settings → Devices & Services → Shark IQ (Local) → your vacuum) to change how often the integration polls each vacuum for status.
+After setup, click **Configure** on the integration card (Settings → Devices & Services → Shark IQ (Local, Unofficial) → your vacuum) to change how often the integration polls each vacuum for status.
 
 - **Default 30 seconds** — sensible balance of freshness and network traffic
 - **15 seconds** — snappier dashboard feel, fine for daily use
@@ -119,7 +121,7 @@ automation:
 
 **"Cannot connect" when adding** — Confirm the IP responds to a ping and that you typed it correctly. The Shark needs to be on the same VLAN as Home Assistant.
 
-**Entity goes unavailable** — Check HA logs for `sharkiq_local`. The vacuum may be asleep on the dock; it should wake on the next poll.
+**Entity goes unavailable** — Check HA logs for `sharkiq_local_unofficial`. The vacuum may be asleep on the dock; it should wake on the next poll.
 
 **Mode shows as `idle` instead of `docked`** — The Shark REST API conflates these. The library uses the `charging` field to tell them apart; if `charging` is reading as `unconnected` but the vacuum is on the dock, the dock plate may not be making contact.
 
